@@ -450,6 +450,31 @@
       ],
       next: null,
     },
+    retake_end: {
+      id: "retake_end",
+      bg: "dorm",
+      chapter: "Пересдача зачёта",
+      cast: [
+        { id: "hero", slot: "left", pose: "alert" },
+        { id: "companion", slot: "right", pose: "warm" },
+      ],
+      lines: [
+        {
+          speaker: "narrator",
+          text: "Хищные дедлайны отбросили Инфа и Мэта обратно в общежитие.",
+        },
+        {
+          speaker: "companion",
+          text: "Похоже, мы попадем на пересдачу зачета.",
+        },
+        {
+          speaker: "hero",
+          text: "Соберемся, подтянем материал и вернемся сильнее.",
+        },
+      ],
+      endMode: "fail",
+      next: null,
+    },
   };
 
   const speakerStyles = {
@@ -810,7 +835,7 @@
       return;
     }
 
-    state.mode = "outro";
+    state.mode = scene.endMode || "outro";
   }
 
   function startChoice(choiceData, nextScene) {
@@ -906,7 +931,7 @@
     if (state.inventory.fgosShield > 0) {
       state.inventory.fgosShield -= 1;
       showMessage("Памятка по ФГОСам нейтрализовала урон дедлайна.", 2.8);
-      return;
+      return false;
     }
 
     state.stats.health = clamp(state.stats.health - amount, 0, state.stats.maxHealth);
@@ -918,15 +943,24 @@
         state.stats.health = 2;
         showMessage(`${resolveHero(state.companionId).name} прикрыл(а) от хищного дедлайна.`, 3.1);
       } else {
-        state.stats.health = 1;
-        showMessage("Дедлайны кусаются. Нужна дисциплина и артефакты.", 2.8);
+        state.stats.health = 0;
+        state.pendingMiniSource = null;
+        state.pendingMiniNext = null;
+        state.qrGame = null;
+        state.planGame = null;
+        state.aiGame = null;
+        state.wolfGame = null;
+        state.finalGame = null;
+        setScene("retake_end");
+        return true;
       }
-      return;
+      return false;
     }
 
     if (reason) {
       showMessage(reason, 2.2);
     }
+    return false;
   }
 
   function startMini(kind, sourceScene, nextScene) {
@@ -1225,17 +1259,14 @@
         if (game.hitCooldown <= 0) {
           game.time = Math.max(0, game.time - 2.4);
           game.hitCooldown = 0.7;
-          takeDeadlineHit(1, "Красные песочные часы съели время.");
+          if (takeDeadlineHit(1, "Красные песочные часы съели время.")) {
+            return;
+          }
         }
       }
     }
 
-    if (input.mouse.clicked) {
-      game.cursor.x = clamp(input.mouse.x, 146, 836);
-      game.cursor.y = clamp(input.mouse.y, 108, 446);
-    }
-
-    if (justPressed("space", "enter") || input.mouse.clicked) {
+    if (justPressed("space", "enter")) {
       for (const sticker of game.stickers) {
         if (sticker.taken) continue;
         const dx = sticker.x - game.cursor.x;
@@ -1302,7 +1333,7 @@
       game.lock = 0.8;
     } else {
       game.feedback = "Нет. Формулировка не выдерживает методическую проверку.";
-      takeDeadlineHit(1, "Курсовой дедлайн подкрался.");
+      if (takeDeadlineHit(1, "Курсовой дедлайн подкрался.")) return;
     }
   }
 
@@ -1323,7 +1354,7 @@
       game.correct += 1;
     } else {
       game.mistakes += 1;
-      takeDeadlineHit(1, "Ошибка в этике применения ИИ.");
+      if (takeDeadlineHit(1, "Ошибка в этике применения ИИ.")) return;
     }
 
     game.feedback = item.explain;
@@ -1410,7 +1441,7 @@
       }
     } else {
       game.feedback = "Порядок сбился. Начни заново.";
-      takeDeadlineHit(1, "Лабиринт урока перепутан.");
+      if (takeDeadlineHit(1, "Лабиринт урока перепутан.")) return;
       game.pool = shuffle([...game.target]);
       game.chosen = [];
     }
@@ -1445,7 +1476,7 @@
       card.removed = true;
       game.mistakes += 1;
       game.notice = "Слабый мотив удален.";
-      takeDeadlineHit(1, "Мотивация должна быть честной и профессиональной.");
+      if (takeDeadlineHit(1, "Мотивация должна быть честной и профессиональной.")) return;
 
       if (game.mistakes >= 3 && state.inventory.retryToken > 0) {
         state.inventory.retryToken -= 1;
@@ -1466,6 +1497,12 @@
   }
 
   function updateOutro() {
+    if (justPressed("enter", "space") || input.mouse.clicked) {
+      resetState();
+    }
+  }
+
+  function updateFail() {
     if (justPressed("enter", "space") || input.mouse.clicked) {
       resetState();
     }
@@ -1501,6 +1538,8 @@
       updateMiniFinal(dt);
     } else if (state.mode === "outro") {
       updateOutro();
+    } else if (state.mode === "fail") {
+      updateFail();
     }
 
     input.justPressed.clear();
@@ -1659,7 +1698,7 @@
       drawRect(42, 162, 40, 40, "#ffffff");
       drawRect(92, 162, 40, 40, "#ffffff");
       drawRect(142, 162, 24, 40, "#ffffff");
-      drawTextOutlined("Стенд пар", 46, 218, 10, palette.ink);
+      drawTextOutlined("Расписание", 46, 218, 10, palette.ink);
 
       drawRect(786, 120, 154, 162, "#d2b8ab");
       drawRect(796, 132, 134, 140, "#f7ede1");
@@ -2305,7 +2344,7 @@
     drawRect(0, 0, VIEW_W, VIEW_H, "rgba(16, 22, 34, 0.32)");
 
     drawPanel(20, 20, 920, 56, "#203757", "#29446a");
-    drawText("Сбор QR-кодов: двигай курсор, Space/Enter или клик для сканирования", 38, 53, 12, "#f5ecd8");
+    drawText("Сбор QR-кодов: стрелки/WASD для движения, Space/Enter для сканирования", 38, 53, 11, "#f5ecd8");
 
     drawPanel(120, 90, 720, 390, "#203757", "#eaf1fd");
 
@@ -2525,6 +2564,24 @@
     drawText("Пройти историю еще раз", 320, 494, 12, "#e6f7ef");
   }
 
+  function drawFailScreen() {
+    drawBackground("dorm");
+    drawRect(0, 0, VIEW_W, VIEW_H, "rgba(10, 16, 28, 0.44)");
+
+    drawPanel(86, 76, 788, 132, "#753246", "#f1e8d6");
+    drawText("ПЕРЕСДАЧА ЗАЧЕТА", 220, 132, 44, palette.burgundy);
+    drawText("Инф и Мэт снова в общежитии.", 214, 170, 13, palette.ink);
+
+    drawPanel(122, 232, 716, 134, "#203757", "#2d4f77");
+    drawText("Здоровье закончилось, и маршрут прервался.", 148, 270, 12, "#f4ebd8");
+    drawText("Лисы готовятся к пересдаче зачета и вернутся сильнее.", 148, 298, 12, "#dce8fa");
+    drawText("Игра завершена.", 148, 326, 12, "#dce8fa");
+
+    drawPanel(236, 428, 488, 70, "#753246", "#8a3d54");
+    drawText("Новая попытка: Enter/Клик", 302, 460, 15, "#f7efdf");
+    drawText("Подготовиться и пройти заново", 284, 486, 11, "#f7dfdf");
+  }
+
   function renderMessage() {
     if (!state.message) return;
     drawPanel(20, VIEW_H - 44, VIEW_W - 40, 30, "#203757", "#29446a");
@@ -2556,6 +2613,8 @@
       drawMiniFinal();
     } else if (state.mode === "outro") {
       drawOutro();
+    } else if (state.mode === "fail") {
+      drawFailScreen();
     }
 
     renderMessage();
