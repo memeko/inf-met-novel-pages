@@ -1092,7 +1092,7 @@
       addArtifact("Заверенный пропуск", "Официальный вход в аудиторию");
       state.inventory.fgos = true;
       state.inventory.fgosShield += 1;
-      addArtifact("Памятка по ФГОСам - иммунитет к курсовым", "1 щит от дедлайна");
+      addArtifact("Памятка ФГОС", "1 щит от дедлайна");
     }
 
     if (kind === "ai") {
@@ -1102,13 +1102,13 @@
 
     if (kind === "wolf") {
       state.tasks.wolf = true;
-      addArtifact("Теплый педагогический отклик", "Практика с заботой о ребенке");
+      addArtifact("Педагогический отклик", "Практика с заботой о ребенке");
       state.inventory.laser = true;
       state.inventory.charisma += 5;
-      addArtifact("Лазерная указка - +5 к харизме на практике", "+5 харизма");
+      addArtifact("Лазерная указка", "+5 харизма");
       state.inventory.points = true;
       state.inventory.retryToken += 1;
-      addArtifact("Баллы по предмету - шанс все перепройти", "+1 повтор");
+      addArtifact("Баллы по предмету", "+1 повтор");
     }
 
     if (kind === "final") {
@@ -1524,6 +1524,19 @@
     ctx.textAlign = "left";
   }
 
+  function drawTextOutlined(text, x, y, size = 16, color = palette.ink, outline = "#ffffff", align = "left") {
+    ctx.font = `${size}px "Press Start 2P", "VT323", monospace`;
+    ctx.textAlign = align;
+    ctx.fillStyle = outline;
+    ctx.fillText(text, x - 1, y);
+    ctx.fillText(text, x + 1, y);
+    ctx.fillText(text, x, y - 1);
+    ctx.fillText(text, x, y + 1);
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+    ctx.textAlign = "left";
+  }
+
   function drawWrappedText(text, x, y, width, lineHeight, size, color) {
     ctx.fillStyle = color;
     ctx.font = `${size}px "Press Start 2P", "VT323", monospace`;
@@ -1619,7 +1632,7 @@
 
       drawTexture(14, 0.07);
       drawVignette(0.16);
-      drawText("Общежитие", 72, 118, 11, palette.ink);
+      drawTextOutlined("Общежитие", 72, 118, 11, palette.ink);
       return;
     }
 
@@ -1646,12 +1659,12 @@
       drawRect(42, 162, 40, 40, "#ffffff");
       drawRect(92, 162, 40, 40, "#ffffff");
       drawRect(142, 162, 24, 40, "#ffffff");
-      drawText("Стенд пар", 46, 218, 10, palette.ink);
+      drawTextOutlined("Стенд пар", 46, 218, 10, palette.ink);
 
       drawRect(786, 120, 154, 162, "#d2b8ab");
       drawRect(796, 132, 134, 140, "#f7ede1");
       drawRect(808, 152, 110, 14, "#753246");
-      drawText("Ауд. 314", 824, 163, 10, "#f3ebd9");
+      drawTextOutlined("Ауд. 314", 824, 163, 10, "#f3ebd9");
       drawRect(202, 152, 14, 64, "#b9a889");
       drawRect(220, 152, 14, 64, "#b9a889");
       drawRect(238, 152, 14, 64, "#b9a889");
@@ -1704,7 +1717,7 @@
       drawRect(810, 280, 20, 34, "#6e8aac");
       drawTexture(14, 0.065);
       drawVignette(0.2);
-      drawText("Лестница и методический контроль", 84, 226, 11, palette.ink);
+      drawTextOutlined("Лестница и методический контроль", 84, 226, 11, palette.ink);
       return;
     }
 
@@ -1718,7 +1731,7 @@
       drawRect(0, 308, VIEW_W, 232, "#d1c5b2");
       drawRect(64, 88, 512, 162, "#35506e");
       drawRect(78, 100, 484, 134, "#3d6a52");
-      drawText("Функциональная грамотность", 102, 136, 12, "#d9f1dd");
+      drawTextOutlined("Функциональная грамотность", 102, 136, 12, "#d9f1dd");
       drawRect(82, 160, 130, 8, "#d9f1dd");
       drawRect(82, 176, 180, 8, "#d9f1dd");
 
@@ -1744,7 +1757,7 @@
       drawRect(762, 112, 22, 20, "#95b494");
       drawTexture(14, 0.06);
       drawVignette(0.18);
-      drawText("Класс", 750, 198, 10, palette.ink);
+      drawTextOutlined("Класс", 750, 198, 10, palette.ink);
       return;
     }
 
@@ -1769,7 +1782,7 @@
       drawRect(346, 74, 268, 98, "#f7f0e3");
       drawRect(362, 90, 236, 66, "#eef5ff");
       drawRect(396, 112, 168, 18, "#753246");
-      drawText("Аудитория 314", 424, 126, 10, "#f5ead9");
+      drawTextOutlined("Аудитория 314", 424, 126, 10, "#f5ead9");
 
       drawRect(420, 252, 120, 70, "#a98b74");
       drawRect(436, 266, 88, 56, "#f4ead8");
@@ -1811,11 +1824,28 @@
       drawRect(698, 246, 22, 42, "#7383a3");
       drawTexture(16, 0.07);
       drawVignette(0.23);
-      drawText("Крыша главного корпуса МПГУ", 120, 242, 12, "#2b3e5e");
+      drawTextOutlined("Крыша главного корпуса МПГУ", 120, 242, 12, "#2b3e5e");
       return;
     }
 
     drawRect(0, 0, VIEW_W, VIEW_H, "#d9dde8");
+  }
+
+  function locationTitle(type) {
+    if (type === "dorm") return "Общежитие";
+    if (type === "hall") return "Холл корпуса";
+    if (type === "stairs") return "Лестница и методический контроль";
+    if (type === "classroom") return "Класс";
+    if (type === "library") return "Аудитория 314";
+    if (type === "roof") return "Крыша главного корпуса МПГУ";
+    return "";
+  }
+
+  function drawLocationTag(type) {
+    const title = locationTitle(type);
+    if (!title) return;
+    drawPanel(16, 152, 420, 28, "#224168", "#2f577f");
+    drawTextOutlined(title, 28, 170, 10, "#f4ebd8");
   }
 
   function slotX(slot) {
@@ -2227,6 +2257,7 @@
 
     drawBackground(scene.bg);
     drawTopHud();
+    drawLocationTag(scene.bg);
 
     const line = currentLine();
     const activeSpeaker = line ? line.speaker : "narrator";
