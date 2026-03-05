@@ -1,0 +1,47 @@
+:root {
+  --bg-night: #121629;
+  --bg-soft: #efe7d2;
+  --ink: #1f2134;
+  --accent-blue: #24395f;
+  --accent-burgundy: #753246;
+  --accent-emerald: #2f6956;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(72vw 52vh at 16% 12%, #f8f2e1 0%, transparent 68%),
+    radial-gradient(90vw 60vh at 84% 84%, #d6dcec 0%, transparent 74%),
+    linear-gradient(165deg, #e5dcc8 0%, #bccbd6 100%);
+  color: var(--ink);
+  font-family: "Press Start 2P", "VT323", "Courier New", monospace;
+}
+
+#frame {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+}
+
+#game {
+  width: min(96vw, calc(96vh * 16 / 9));
+  height: min(96vh, calc(96vw * 9 / 16));
+  border: 6px solid #fbf6ea;
+  box-shadow:
+    0 0 0 5px #2a4368,
+    0 0 0 10px #7a3348,
+    0 20px 56px rgba(20, 24, 40, 0.45);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #0f1323;
+}
