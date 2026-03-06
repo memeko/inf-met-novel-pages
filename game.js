@@ -24,6 +24,7 @@
     softGold: "#d6b86a",
     warning: "#d4524f",
   };
+  const locationLabelColor = "#1f3556";
 
   const roadmap = {
     bvo: [
@@ -496,6 +497,12 @@
       y: 0,
       clicked: false,
     },
+    virtual: {
+      keyCounts: new Map(),
+      justPressed: new Set(),
+      touchBindings: new Map(),
+      touchActive: false,
+    },
   };
 
   const state = {
@@ -624,11 +631,80 @@
     state.messageTimer = 0;
     state.companionTip = "";
     state.manualTimeControl = false;
+    clearVirtualInput();
   }
 
   function normalizeKey(key) {
     if (key === " ") return "space";
     return key.toLowerCase();
+  }
+
+  function getPointerPos(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const rawX = (clientX - rect.left) * scaleX;
+    const rawY = (clientY - rect.top) * scaleY;
+    return {
+      x: rawX / RENDER_SCALE_X,
+      y: rawY / RENDER_SCALE_Y,
+    };
+  }
+
+  function getMousePos(event) {
+    return getPointerPos(event.clientX, event.clientY);
+  }
+
+  function getTouchPos(touch) {
+    return getPointerPos(touch.clientX, touch.clientY);
+  }
+
+  function getQrTouchButtons() {
+    return [
+      { key: "arrowup", label: "^", x: 108, y: 352, w: 56, h: 56 },
+      { key: "arrowleft", label: "<", x: 44, y: 416, w: 56, h: 56 },
+      { key: "arrowdown", label: "v", x: 108, y: 416, w: 56, h: 56 },
+      { key: "arrowright", label: ">", x: 172, y: 416, w: 56, h: 56 },
+      { key: "space", label: "SCAN", x: 772, y: 388, w: 148, h: 84 },
+    ];
+  }
+
+  function findQrTouchKey(point) {
+    if (state.mode !== "mini_qr" || !state.qrGame) return null;
+    for (const button of getQrTouchButtons()) {
+      if (pointInRect(point, button)) {
+        return button.key;
+      }
+    }
+    return null;
+  }
+
+  function pressVirtualKey(key, touchId) {
+    if (!key) return;
+    const current = input.virtual.keyCounts.get(key) || 0;
+    if (current === 0) {
+      input.virtual.justPressed.add(key);
+    }
+    input.virtual.keyCounts.set(key, current + 1);
+    input.virtual.touchBindings.set(touchId, key);
+  }
+
+  function releaseVirtualTouch(touchId) {
+    const key = input.virtual.touchBindings.get(touchId);
+    if (!key) return;
+    const current = input.virtual.keyCounts.get(key) || 0;
+    if (current <= 1) {
+      input.virtual.keyCounts.delete(key);
+    } else {
+      input.virtual.keyCounts.set(key, current - 1);
+    }
+    input.virtual.touchBindings.delete(touchId);
+  }
+
+  function clearVirtualInput() {
+    input.virtual.keyCounts.clear();
+    input.virtual.justPressed.clear();
+    input.virtual.touchBindings.clear();
   }
 
   window.addEventListener("keydown", (event) => {
@@ -658,6 +734,7 @@
   window.addEventListener("blur", () => {
     input.keys.clear();
     input.justPressed.clear();
+    clearVirtualInput();
   });
 
   canvas.addEventListener("mousemove", (event) => {
@@ -673,19 +750,70 @@
     input.mouse.clicked = true;
   });
 
-  document.addEventListener("fullscreenchange", resizeCanvas);
+  canvas.addEventListener(
+    "touchstart",
+    (event) => {
+      input.virtual.touchActive = true;
+      for (const touch of event.changedTouches) {
+        const pos = getTouchPos(touch);
+        input.mouse.x = pos.x;
+        input.mouse.y = pos.y;
+        input.mouse.clicked = true;
+        const key = findQrTouchKey(pos);
+        if (key) {
+          pressVirtualKey(key, touch.identifier);
+        }
+      }
+      event.preventDefault();
+    },
+    { passive: false }
+  );
 
-  function getMousePos(event) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const rawX = (event.clientX - rect.left) * scaleX;
-    const rawY = (event.clientY - rect.top) * scaleY;
-    return {
-      x: rawX / RENDER_SCALE_X,
-      y: rawY / RENDER_SCALE_Y,
-    };
-  }
+  canvas.addEventListener(
+    "touchmove",
+    (event) => {
+      input.virtual.touchActive = true;
+      for (const touch of event.changedTouches) {
+        const pos = getTouchPos(touch);
+        input.mouse.x = pos.x;
+        input.mouse.y = pos.y;
+        const nextKey = findQrTouchKey(pos);
+        const prevKey = input.virtual.touchBindings.get(touch.identifier) || null;
+        if (prevKey !== nextKey) {
+          releaseVirtualTouch(touch.identifier);
+          if (nextKey) {
+            pressVirtualKey(nextKey, touch.identifier);
+          }
+        }
+      }
+      event.preventDefault();
+    },
+    { passive: false }
+  );
+
+  canvas.addEventListener(
+    "touchend",
+    (event) => {
+      for (const touch of event.changedTouches) {
+        releaseVirtualTouch(touch.identifier);
+      }
+      event.preventDefault();
+    },
+    { passive: false }
+  );
+
+  canvas.addEventListener(
+    "touchcancel",
+    (event) => {
+      for (const touch of event.changedTouches) {
+        releaseVirtualTouch(touch.identifier);
+      }
+      event.preventDefault();
+    },
+    { passive: false }
+  );
+
+  document.addEventListener("fullscreenchange", resizeCanvas);
 
   function toggleFullscreen() {
     if (document.fullscreenElement) {
@@ -710,11 +838,11 @@
   }
 
   function justPressed(...keys) {
-    return keys.some((key) => input.justPressed.has(key));
+    return keys.some((key) => input.justPressed.has(key) || input.virtual.justPressed.has(key));
   }
 
   function isDown(...keys) {
-    return keys.some((key) => input.keys.has(key));
+    return keys.some((key) => input.keys.has(key) || (input.virtual.keyCounts.get(key) || 0) > 0);
   }
 
   function clamp(value, min, max) {
@@ -1518,6 +1646,10 @@
       }
     }
 
+    if (state.mode !== "mini_qr" && input.virtual.keyCounts.size > 0) {
+      clearVirtualInput();
+    }
+
     if (state.mode === "intro") {
       updateIntro(dt);
     } else if (state.mode === "select") {
@@ -1543,6 +1675,7 @@
     }
 
     input.justPressed.clear();
+    input.virtual.justPressed.clear();
     input.mouse.clicked = false;
   }
 
@@ -1671,7 +1804,7 @@
 
       drawTexture(14, 0.07);
       drawVignette(0.16);
-      drawTextOutlined("Общежитие", 72, 118, 11, palette.ink);
+      drawTextOutlined("Общежитие", 72, 118, 11, locationLabelColor, "#ffffff");
       return;
     }
 
@@ -1698,12 +1831,12 @@
       drawRect(42, 162, 40, 40, "#ffffff");
       drawRect(92, 162, 40, 40, "#ffffff");
       drawRect(142, 162, 24, 40, "#ffffff");
-      drawTextOutlined("Расписание", 46, 218, 10, palette.ink);
+      drawTextOutlined("Расписание", 46, 218, 10, locationLabelColor, "#ffffff");
 
       drawRect(786, 120, 154, 162, "#d2b8ab");
       drawRect(796, 132, 134, 140, "#f7ede1");
       drawRect(808, 152, 110, 14, "#753246");
-      drawTextOutlined("Ауд. 314", 824, 163, 10, "#f3ebd9");
+      drawTextOutlined("Ауд. 314", 824, 163, 10, locationLabelColor, "#ffffff");
       drawRect(202, 152, 14, 64, "#b9a889");
       drawRect(220, 152, 14, 64, "#b9a889");
       drawRect(238, 152, 14, 64, "#b9a889");
@@ -1756,7 +1889,7 @@
       drawRect(810, 280, 20, 34, "#6e8aac");
       drawTexture(14, 0.065);
       drawVignette(0.2);
-      drawTextOutlined("Лестница и методический контроль", 84, 226, 11, palette.ink);
+      drawTextOutlined("Лестница и методический контроль", 84, 226, 11, locationLabelColor, "#ffffff");
       return;
     }
 
@@ -1770,7 +1903,7 @@
       drawRect(0, 308, VIEW_W, 232, "#d1c5b2");
       drawRect(64, 88, 512, 162, "#35506e");
       drawRect(78, 100, 484, 134, "#3d6a52");
-      drawTextOutlined("Функциональная грамотность", 102, 136, 12, "#d9f1dd");
+      drawTextOutlined("Функциональная грамотность", 102, 136, 12, locationLabelColor, "#ffffff");
       drawRect(82, 160, 130, 8, "#d9f1dd");
       drawRect(82, 176, 180, 8, "#d9f1dd");
 
@@ -1796,7 +1929,7 @@
       drawRect(762, 112, 22, 20, "#95b494");
       drawTexture(14, 0.06);
       drawVignette(0.18);
-      drawTextOutlined("Класс", 750, 198, 10, palette.ink);
+      drawTextOutlined("Класс", 750, 198, 10, locationLabelColor, "#ffffff");
       return;
     }
 
@@ -1821,7 +1954,7 @@
       drawRect(346, 74, 268, 98, "#f7f0e3");
       drawRect(362, 90, 236, 66, "#eef5ff");
       drawRect(396, 112, 168, 18, "#753246");
-      drawTextOutlined("Аудитория 314", 424, 126, 10, "#f5ead9");
+      drawTextOutlined("Аудитория 314", 424, 126, 10, locationLabelColor, "#ffffff");
 
       drawRect(420, 252, 120, 70, "#a98b74");
       drawRect(436, 266, 88, 56, "#f4ead8");
@@ -1863,7 +1996,7 @@
       drawRect(698, 246, 22, 42, "#7383a3");
       drawTexture(16, 0.07);
       drawVignette(0.23);
-      drawTextOutlined("Крыша главного корпуса МПГУ", 120, 242, 12, "#2b3e5e");
+      drawTextOutlined("Крыша главного корпуса МПГУ", 120, 242, 12, locationLabelColor, "#ffffff");
       return;
     }
 
@@ -1883,8 +2016,8 @@
   function drawLocationTag(type) {
     const title = locationTitle(type);
     if (!title) return;
-    drawPanel(16, 152, 420, 28, "#224168", "#2f577f");
-    drawTextOutlined(title, 28, 170, 10, "#f4ebd8");
+    drawPanel(16, 152, 420, 28, "#d7e1f3", "#f6f0e2");
+    drawTextOutlined(title, 28, 170, 10, locationLabelColor, "#ffffff");
   }
 
   function slotX(slot) {
@@ -2344,7 +2477,7 @@
     drawRect(0, 0, VIEW_W, VIEW_H, "rgba(16, 22, 34, 0.32)");
 
     drawPanel(20, 20, 920, 56, "#203757", "#29446a");
-    drawText("Сбор QR-кодов: стрелки/WASD для движения, Space/Enter для сканирования", 38, 53, 11, "#f5ecd8");
+    drawText("Сбор QR-кодов: стрелки/WASD + Space/Enter. На смартфоне - кнопки на экране.", 34, 53, 10, "#f5ecd8");
 
     drawPanel(120, 90, 720, 390, "#203757", "#eaf1fd");
 
@@ -2372,6 +2505,29 @@
     drawRect(game.cursor.x - 8, game.cursor.y - 8, 16, 16, "#f6e6cf");
     drawRect(game.cursor.x - 2, game.cursor.y - 16, 4, 32, "#224168");
     drawRect(game.cursor.x - 16, game.cursor.y - 2, 32, 4, "#224168");
+
+    if (input.virtual.touchActive || navigator.maxTouchPoints > 0) {
+      for (const button of getQrTouchButtons()) {
+        const pressed = (input.virtual.keyCounts.get(button.key) || 0) > 0;
+        drawPanel(
+          button.x,
+          button.y,
+          button.w,
+          button.h,
+          pressed ? "#2f6956" : "#203757",
+          pressed ? "#e3f3ea" : "#f7efdf"
+        );
+        drawText(
+          button.label,
+          button.x + button.w / 2,
+          button.y + (button.key === "space" ? 49 : 36),
+          button.key === "space" ? 11 : 16,
+          palette.ink,
+          "center"
+        );
+      }
+      drawText("Сенсорное управление", 742, 506, 10, "#f5ecd8");
+    }
   }
 
   function getPlanBoxes() {
