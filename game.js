@@ -29,7 +29,7 @@
   const roadmap = {
     bvo: [
       "1 курс: Первая пара",
-      "2 курс: Методическая логика",
+      "2 курс: Летняя сессия",
       "3 курс: Практика в школе",
       "4 курс: Исследовательский семинар",
       "5 курс: Преддипломный маршрут",
@@ -110,6 +110,15 @@
       furDark: "#72767c",
       outfit: "#6a6d74",
       extra: ["suit", "strict"],
+    },
+    varan_jacket: {
+      id: "varan_jacket",
+      name: "Варан в пиджаке",
+      species: "varan",
+      fur: "#7c8a5b",
+      furDark: "#5b6643",
+      outfit: "#56627a",
+      extra: ["jacket", "chalk"],
     },
   };
 
@@ -449,6 +458,174 @@
           text: "Институт математики и информатики МПГУ - это место, где идеи становятся педагогической практикой.",
         },
       ],
+      next: "summer_intro",
+    },
+    summer_intro: {
+      id: "summer_intro",
+      bg: "roof",
+      chapter: roadmap.bvo[1],
+      cast: [
+        { id: "hero", slot: "left", pose: "focus" },
+        { id: "companion", slot: "right", pose: "warm" },
+      ],
+      lines: [
+        {
+          speaker: "narrator",
+          text: "Второй уровень: Инф и Мэт готовятся к летней сессии.",
+        },
+        {
+          speaker: "hero",
+          text: "Пора проверить математику на прочность.",
+        },
+        {
+          speaker: "companion",
+          text: "Начнем с загадки, потом спортзал и столовая.",
+        },
+      ],
+      next: "qadic_request",
+    },
+    qadic_request: {
+      id: "qadic_request",
+      bg: "classroom",
+      chapter: roadmap.bvo[1],
+      cast: [
+        { id: "hero", slot: "left", pose: "focus" },
+        { id: "varan_jacket", slot: "center", pose: "calm" },
+        { id: "companion", slot: "right", pose: "warm" },
+      ],
+      lines: [
+        {
+          speaker: "varan_jacket",
+          text: "Перед летней сессией загадка: как выглядит q-адическое число?",
+        },
+        {
+          speaker: "varan_jacket",
+          text: "Выберите один из четырех вариантов ответа.",
+        },
+      ],
+      triggerMini: "qadic",
+      taskKey: "qadic",
+      next: "qadic_after",
+    },
+    qadic_after: {
+      id: "qadic_after",
+      bg: "classroom",
+      chapter: roadmap.bvo[1],
+      cast: [
+        { id: "hero", slot: "left", pose: "focus" },
+        { id: "varan_jacket", slot: "center", pose: "calm" },
+        { id: "companion", slot: "right", pose: "warm" },
+      ],
+      lines: [
+        {
+          speaker: "varan_jacket",
+          text: "Верно: q-адические числа бесконечны в обе стороны по степеням q.",
+        },
+        {
+          speaker: "varan_jacket",
+          text: "Их можно складывать и умножать, как полноценные числа.",
+        },
+      ],
+      next: "gym_request",
+    },
+    gym_request: {
+      id: "gym_request",
+      bg: "gym",
+      chapter: roadmap.bvo[1],
+      cast: [
+        { id: "hero", slot: "left", pose: "focus" },
+        { id: "companion", slot: "right", pose: "warm" },
+      ],
+      lines: [
+        {
+          speaker: "narrator",
+          text: "В спортзале новая тренировка: ловить только нужные числа.",
+        },
+        {
+          speaker: "companion",
+          text: "Раунд 1: четные. Раунд 2: кратные 3. Раунд 3: кратные 7.",
+        },
+      ],
+      triggerMini: "sport",
+      taskKey: "sport",
+      next: "gym_after",
+    },
+    gym_after: {
+      id: "gym_after",
+      bg: "gym",
+      chapter: roadmap.bvo[1],
+      cast: [
+        { id: "hero", slot: "left", pose: "happy" },
+        { id: "companion", slot: "right", pose: "happy" },
+      ],
+      lines: [
+        {
+          speaker: "hero",
+          text: "Числовая ловкость прокачана. Осталась столовая.",
+        },
+      ],
+      next: "canteen_request",
+    },
+    canteen_request: {
+      id: "canteen_request",
+      bg: "canteen",
+      chapter: roadmap.bvo[1],
+      cast: [
+        { id: "hero", slot: "left", pose: "focus" },
+        { id: "companion", slot: "right", pose: "warm" },
+      ],
+      lines: [
+        {
+          speaker: "narrator",
+          text: "В столовой лисята хотят купить ПИрожок.",
+        },
+        {
+          speaker: "companion",
+          text: "Но названия пирожков зашифрованы буквами греческого, латиницы и иврита.",
+        },
+      ],
+      triggerMini: "letters",
+      taskKey: "letters",
+      next: "canteen_after",
+    },
+    canteen_after: {
+      id: "canteen_after",
+      bg: "canteen",
+      chapter: roadmap.bvo[1],
+      cast: [
+        { id: "hero", slot: "left", pose: "happy" },
+        { id: "companion", slot: "right", pose: "happy" },
+      ],
+      lines: [
+        {
+          speaker: "hero",
+          text: "ПИрожок найден. Летняя сессия закрыта!",
+        },
+        {
+          speaker: "narrator",
+          text: "Теперь лисята едут в летний лагерь на практику вожатыми.",
+        },
+      ],
+      next: "summer_final",
+    },
+    summer_final: {
+      id: "summer_final",
+      bg: "sea",
+      chapter: roadmap.bvo[1],
+      cast: [
+        { id: "hero", slot: "left", pose: "happy" },
+        { id: "companion", slot: "right", pose: "happy" },
+      ],
+      lines: [
+        {
+          speaker: "narrator",
+          text: "Инф и Мэт успешно сдали летнюю сессию.",
+        },
+        {
+          speaker: "companion",
+          text: "Впереди море, закат и педагогическая практика в лагере.",
+        },
+      ],
       next: null,
     },
     retake_end: {
@@ -487,6 +664,7 @@
     wolf_tail: { name: "Умный волк", color: "#345d7f" },
     dog_bow: { name: "Собачка с бантиком", color: "#8a4f75" },
     gray_cat: { name: "Высокий серый кот", color: "#50545f" },
+    varan_jacket: { name: "Варан", color: "#4f6141" },
   };
 
   const input = {
@@ -523,6 +701,9 @@
       ai: false,
       wolf: false,
       final: false,
+      qadic: false,
+      sport: false,
+      letters: false,
     },
     artifacts: [],
     inventory: {
@@ -550,6 +731,9 @@
     aiGame: null,
     wolfGame: null,
     finalGame: null,
+    qadicGame: null,
+    sportGame: null,
+    lettersGame: null,
     message: "",
     messageTimer: 0,
     clock: 0,
@@ -600,6 +784,9 @@
     state.tasks.ai = false;
     state.tasks.wolf = false;
     state.tasks.final = false;
+    state.tasks.qadic = false;
+    state.tasks.sport = false;
+    state.tasks.letters = false;
 
     state.artifacts = [];
 
@@ -626,6 +813,9 @@
     state.aiGame = null;
     state.wolfGame = null;
     state.finalGame = null;
+    state.qadicGame = null;
+    state.sportGame = null;
+    state.lettersGame = null;
 
     state.message = "";
     state.messageTimer = 0;
@@ -1052,7 +1242,19 @@
       state.companionTip = `${companionName}: держись, осталось доказать мотивацию.`;
       return;
     }
-    state.companionTip = `${companionName}: первый курс пройден, дальше больше.`;
+    if (!state.tasks.qadic) {
+      state.companionTip = `${companionName}: дальше загадка про q-адические числа.`;
+      return;
+    }
+    if (!state.tasks.sport) {
+      state.companionTip = `${companionName}: в спортзале ловим только нужные числа.`;
+      return;
+    }
+    if (!state.tasks.letters) {
+      state.companionTip = `${companionName}: в столовой смотри на буквы и алфавиты внимательно.`;
+      return;
+    }
+    state.companionTip = `${companionName}: летняя сессия закрыта, впереди практика у моря.`;
   }
 
   function takeDeadlineHit(amount = 1, reason = "") {
@@ -1079,6 +1281,9 @@
         state.aiGame = null;
         state.wolfGame = null;
         state.finalGame = null;
+        state.qadicGame = null;
+        state.sportGame = null;
+        state.lettersGame = null;
         setScene("retake_end");
         return true;
       }
@@ -1234,6 +1439,65 @@
         notice: "Собери пазл " + '"почему я выбрал профессию"' + ".",
       };
       showMessage("Мини-игра: финальный пазл мотивации.");
+      return;
+    }
+
+    if (kind === "qadic") {
+      state.mode = "mini_qadic";
+      state.qadicGame = {
+        question: "Как выглядит q-адическое число?",
+        options: [
+          { text: "Конечная десятичная дробь с запятой.", good: false },
+          { text: "Бесконечная запись в обе стороны по степеням q.", good: true },
+          { text: "Только отрицательные целые числа.", good: false },
+          { text: "Случайный набор цифр без арифметики.", good: false },
+        ],
+        selected: 0,
+        solved: false,
+        lock: 0,
+        feedback: "Выбери правильный вариант.",
+      };
+      showMessage("Мини-игра: загадка про q-адические числа.", 3.0);
+      return;
+    }
+
+    if (kind === "sport") {
+      state.mode = "mini_sport";
+      state.sportGame = {
+        round: 0,
+        caught: 0,
+        goal: 6,
+        basketX: 480,
+        basketW: 108,
+        numbers: [],
+        spawnTimer: 0.35,
+        time: 78,
+        feedback: "Раунд 1: лови только четные числа.",
+      };
+      showMessage("Спортзал: ловим числа по правилам раундов.", 3.2);
+      return;
+    }
+
+    if (kind === "letters") {
+      state.mode = "mini_letters";
+      state.lettersGame = {
+        items: [
+          { name: "альфа", symbol: "α" },
+          { name: "омега", symbol: "Ω" },
+          { name: "эм (латиница)", symbol: "M" },
+          { name: "джи (латиница)", symbol: "G" },
+          { name: "алеф", symbol: "א" },
+          { name: "шин", symbol: "ש" },
+        ],
+        index: 0,
+        selected: 0,
+        options: [],
+        correct: 0,
+        mistakes: 0,
+        feedback: "Найди букву по русскому названию.",
+      };
+      state.lettersGame.options = buildLetterOptions(state.lettersGame);
+      showMessage("Столовая: расшифруй ПИрожки по буквам.", 3.2);
     }
   }
 
@@ -1279,6 +1543,22 @@
       state.inventory.coffee = true;
       state.stats.health = clamp(state.stats.health + 2, 0, state.stats.maxHealth);
       addArtifact("Кофе +2 к здоровью", "Поддержка перед зачётами");
+    }
+
+    if (kind === "qadic") {
+      state.tasks.qadic = true;
+      addArtifact("q-адик конспект", "Базовая модель q-адических чисел");
+    }
+
+    if (kind === "sport") {
+      state.tasks.sport = true;
+      addArtifact("Спорт-зачёт", "Точность в признаках делимости");
+      state.stats.deadline = clamp(state.stats.deadline + 8, 0, 180);
+    }
+
+    if (kind === "letters") {
+      state.tasks.letters = true;
+      addArtifact("ПИрожок-код", "Алфавитный шифр столовой раскрыт");
     }
 
     refreshCompanionTip();
@@ -1624,6 +1904,268 @@
     }
   }
 
+  function getQadicBoxes() {
+    return [
+      { x: 120, y: 166, w: 720, h: 62 },
+      { x: 120, y: 242, w: 720, h: 62 },
+      { x: 120, y: 318, w: 720, h: 62 },
+      { x: 120, y: 394, w: 720, h: 62 },
+    ];
+  }
+
+  function selectQadicOption(index) {
+    const game = state.qadicGame;
+    if (!game || game.solved) return;
+    const option = game.options[index];
+    if (!option) return;
+
+    if (option.good) {
+      game.feedback = "Верно. Это запись по степеням q, бесконечная в обе стороны.";
+      game.solved = true;
+      game.lock = 0.9;
+    } else {
+      game.feedback = "Пока нет. Подумай о бесконечной записи по степеням q.";
+      if (takeDeadlineHit(1, "Неверная гипотеза по q-адическим числам.")) return;
+    }
+  }
+
+  function updateMiniQadic(dt) {
+    const game = state.qadicGame;
+    if (!game) return;
+
+    if (justPressed("arrowup", "w")) {
+      game.selected = (game.selected - 1 + game.options.length) % game.options.length;
+    }
+    if (justPressed("arrowdown", "s")) {
+      game.selected = (game.selected + 1) % game.options.length;
+    }
+
+    const boxes = getQadicBoxes();
+    if (input.mouse.clicked) {
+      const hit = boxes.findIndex((box) => pointInRect(input.mouse, box));
+      if (hit >= 0) {
+        game.selected = hit;
+        selectQadicOption(hit);
+      }
+    }
+
+    if (!game.solved) {
+      if (justPressed("1")) selectQadicOption(0);
+      if (justPressed("2")) selectQadicOption(1);
+      if (justPressed("3")) selectQadicOption(2);
+      if (justPressed("4")) selectQadicOption(3);
+    }
+
+    if (justPressed("enter", "space")) {
+      selectQadicOption(game.selected);
+    }
+
+    if (game.lock > 0) {
+      game.lock -= dt;
+      if (game.lock <= 0 && game.solved) {
+        state.qadicGame = null;
+        completeMini("qadic", true);
+      }
+    }
+  }
+
+  function sportRuleText(round) {
+    if (round === 0) return "Раунд 1: лови только четные числа.";
+    if (round === 1) return "Раунд 2: лови только числа, делящиеся на 3.";
+    return "Раунд 3: лови только числа, делящиеся на 7.";
+  }
+
+  function sportHintText(round) {
+    if (round === 0) return "Подсказка: четные оканчиваются на 0, 2, 4, 6, 8.";
+    if (round === 1) return "Признак делимости на 3: сумма цифр числа кратна 3.";
+    return "Для 7 сверяй с таблицей умножения: 7, 14, 21, ...";
+  }
+
+  function sportMatchesRound(round, value) {
+    if (round === 0) return value % 2 === 0;
+    if (round === 1) return value % 3 === 0;
+    return value % 7 === 0;
+  }
+
+  function spawnSportNumber(round) {
+    const shouldMatch = Math.random() < 0.48;
+    let value = 1;
+
+    if (shouldMatch) {
+      if (round === 0) {
+        value = 2 * (1 + Math.floor(Math.random() * 49));
+      } else if (round === 1) {
+        value = 3 * (1 + Math.floor(Math.random() * 33));
+      } else {
+        value = 7 * (1 + Math.floor(Math.random() * 14));
+      }
+    } else {
+      value = 1 + Math.floor(Math.random() * 99);
+      while (sportMatchesRound(round, value)) {
+        value = 1 + Math.floor(Math.random() * 99);
+      }
+    }
+
+    return {
+      x: 92 + Math.random() * 776,
+      y: 96,
+      value,
+      vy: 136 + Math.random() * 86,
+    };
+  }
+
+  function updateMiniSport(dt) {
+    const game = state.sportGame;
+    if (!game) return;
+
+    const moveX = (isDown("arrowright", "d") ? 1 : 0) - (isDown("arrowleft", "a") ? 1 : 0);
+    game.basketX = clamp(game.basketX + moveX * 336 * dt, 94, 866);
+    if (input.mouse.clicked) {
+      game.basketX = clamp(input.mouse.x, 94, 866);
+    }
+
+    game.time = Math.max(0, game.time - dt);
+    game.spawnTimer -= dt;
+    if (game.spawnTimer <= 0) {
+      game.numbers.push(spawnSportNumber(game.round));
+      game.spawnTimer = 0.45 + Math.random() * 0.25;
+    }
+
+    for (let i = game.numbers.length - 1; i >= 0; i--) {
+      const item = game.numbers[i];
+      item.y += item.vy * dt;
+
+      const catchZone = item.y >= 438 && item.y <= 490;
+      const inBasket = Math.abs(item.x - game.basketX) <= game.basketW / 2;
+      if (catchZone && inBasket) {
+        if (sportMatchesRound(game.round, item.value)) {
+          game.caught += 1;
+          game.feedback = `${sportRuleText(game.round)} Поймано: ${game.caught}/${game.goal}.`;
+          game.numbers.splice(i, 1);
+
+          if (game.caught >= game.goal) {
+            game.round += 1;
+            game.caught = 0;
+            game.numbers = [];
+            if (game.round >= 3) {
+              state.sportGame = null;
+              completeMini("sport", true);
+              return;
+            }
+            game.feedback = `${sportRuleText(game.round)} ${sportHintText(game.round)}`;
+            if (game.round === 1) {
+              showMessage("Раунд 2: лови кратные 3. Признак: сумма цифр числа кратна 3.", 3.3);
+            } else if (game.round === 2) {
+              showMessage("Раунд 3: лови кратные 7.", 2.8);
+            }
+          }
+        } else {
+          game.numbers.splice(i, 1);
+          game.feedback = `${item.value} не подходит. ${sportHintText(game.round)}`;
+          if (takeDeadlineHit(1, "Поймано число не по условию раунда.")) {
+            return;
+          }
+        }
+        continue;
+      }
+
+      if (item.y > 510) {
+        game.numbers.splice(i, 1);
+      }
+    }
+
+    if (game.time <= 0) {
+      state.sportGame = null;
+      showMessage("Время вышло. Тренировку нужно пройти заново.", 3.0);
+      completeMini("sport", false);
+    }
+  }
+
+  function buildLetterOptions(game) {
+    if (!game || !game.items[game.index]) return [];
+    const target = game.items[game.index].symbol;
+    const pool = game.items.map((item) => item.symbol);
+    const distractors = shuffle([...new Set(pool.filter((symbol) => symbol !== target))]).slice(0, 3);
+    return shuffle([target, ...distractors]);
+  }
+
+  function getLetterBoxes() {
+    return [
+      { x: 162, y: 214, w: 286, h: 88 },
+      { x: 512, y: 214, w: 286, h: 88 },
+      { x: 162, y: 322, w: 286, h: 88 },
+      { x: 512, y: 322, w: 286, h: 88 },
+    ];
+  }
+
+  function submitLetterAnswer(index) {
+    const game = state.lettersGame;
+    if (!game) return;
+    const current = game.items[game.index];
+    if (!current) return;
+    const picked = game.options[index];
+    if (!picked) return;
+
+    if (picked === current.symbol) {
+      game.correct += 1;
+      game.feedback = `Верно: ${current.name} = ${current.symbol}`;
+    } else {
+      game.mistakes += 1;
+      game.feedback = `Неверно: ${current.name} обозначается ${current.symbol}.`;
+      if (takeDeadlineHit(1, "Буквенный шифр столовой оказался с подвохом.")) return;
+    }
+
+    game.index += 1;
+    if (game.index >= game.items.length) {
+      const passed = game.correct >= 5;
+      state.lettersGame = null;
+      if (!passed) {
+        showMessage("Нужно лучше сопоставлять названия букв и символы.", 3.1);
+      }
+      completeMini("letters", passed);
+      return;
+    }
+
+    game.options = buildLetterOptions(game);
+    game.selected = 0;
+  }
+
+  function updateMiniLetters() {
+    const game = state.lettersGame;
+    if (!game) return;
+
+    if (justPressed("arrowleft", "a")) {
+      game.selected = game.selected % 2 === 0 ? game.selected + 1 : game.selected - 1;
+    }
+    if (justPressed("arrowright", "d")) {
+      game.selected = game.selected % 2 === 0 ? game.selected + 1 : game.selected - 1;
+    }
+    if (justPressed("arrowup", "w")) {
+      game.selected = game.selected < 2 ? game.selected + 2 : game.selected - 2;
+    }
+    if (justPressed("arrowdown", "s")) {
+      game.selected = game.selected < 2 ? game.selected + 2 : game.selected - 2;
+    }
+
+    const boxes = getLetterBoxes();
+    if (input.mouse.clicked) {
+      const hit = boxes.findIndex((box) => pointInRect(input.mouse, box));
+      if (hit >= 0) {
+        game.selected = hit;
+        submitLetterAnswer(hit);
+      }
+    }
+
+    if (justPressed("1")) submitLetterAnswer(0);
+    if (justPressed("2")) submitLetterAnswer(1);
+    if (justPressed("3")) submitLetterAnswer(2);
+    if (justPressed("4")) submitLetterAnswer(3);
+
+    if (justPressed("enter", "space")) {
+      submitLetterAnswer(game.selected);
+    }
+  }
+
   function updateOutro() {
     if (justPressed("enter", "space") || input.mouse.clicked) {
       resetState();
@@ -1668,6 +2210,12 @@
       updateMiniWolf(dt);
     } else if (state.mode === "mini_final") {
       updateMiniFinal(dt);
+    } else if (state.mode === "mini_qadic") {
+      updateMiniQadic(dt);
+    } else if (state.mode === "mini_sport") {
+      updateMiniSport(dt);
+    } else if (state.mode === "mini_letters") {
+      updateMiniLetters();
     } else if (state.mode === "outro") {
       updateOutro();
     } else if (state.mode === "fail") {
@@ -2000,6 +2548,111 @@
       return;
     }
 
+    if (type === "gym") {
+      const grad = ctx.createLinearGradient(0, 0, 0, VIEW_H);
+      grad.addColorStop(0, "#d9e4f5");
+      grad.addColorStop(1, "#efd9bf");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+
+      drawRect(0, 326, VIEW_W, 214, "#c79f73");
+      for (let i = 0; i < 12; i++) {
+        drawRect(0, 330 + i * 16, VIEW_W, 4, i % 2 ? "#b98c62" : "#d8b086");
+      }
+
+      drawRect(46, 98, 868, 188, "#f2ede0");
+      drawRect(58, 110, 844, 164, "#cfd9ea");
+      drawRect(72, 124, 816, 136, "#f3f7ff");
+      drawRect(120, 140, 280, 108, "#36587c");
+      drawRect(560, 140, 280, 108, "#36587c");
+      drawRect(136, 156, 248, 76, "#7aa0ce");
+      drawRect(576, 156, 248, 76, "#7aa0ce");
+
+      drawRect(420, 124, 120, 140, "#f5f1e6");
+      drawRect(442, 146, 76, 94, "#cc4f42");
+      drawRect(456, 160, 48, 66, "#f5f1e6");
+      drawRect(468, 178, 24, 30, "#cc4f42");
+
+      drawRect(64, 302, 832, 8, "#6d8eb8");
+      drawRect(74, 308, 812, 4, "#4f6f98");
+      drawTexture(14, 0.05);
+      drawVignette(0.16);
+      drawTextOutlined("Спортзал", 96, 124, 12, locationLabelColor, "#ffffff");
+      return;
+    }
+
+    if (type === "canteen") {
+      const grad = ctx.createLinearGradient(0, 0, 0, VIEW_H);
+      grad.addColorStop(0, "#e7edf7");
+      grad.addColorStop(1, "#f2dfc7");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+
+      drawRect(0, 320, VIEW_W, 220, "#c9b69e");
+      drawRect(0, 286, VIEW_W, 34, "#9fb0c9");
+
+      drawRect(72, 122, 816, 176, "#f6f0e3");
+      drawRect(86, 136, 788, 148, "#efe6d7");
+      drawRect(114, 156, 220, 92, "#2f486b");
+      drawRect(366, 156, 220, 92, "#2f486b");
+      drawRect(618, 156, 220, 92, "#2f486b");
+
+      drawRect(108, 264, 744, 76, "#b7865c");
+      drawRect(122, 278, 716, 48, "#e6ceb3");
+      drawRect(150, 286, 92, 28, "#d5a774");
+      drawRect(266, 286, 92, 28, "#d5a774");
+      drawRect(382, 286, 92, 28, "#d5a774");
+      drawRect(498, 286, 92, 28, "#d5a774");
+      drawRect(614, 286, 92, 28, "#d5a774");
+
+      drawTextOutlined("α  Ω  M  א", 150, 206, 14, "#f5f1e6", "#223754");
+      drawTextOutlined("G  β  ש  λ", 402, 206, 14, "#f5f1e6", "#223754");
+      drawTextOutlined("ПИрожки", 660, 206, 14, "#f5f1e6", "#223754");
+
+      drawTexture(14, 0.06);
+      drawVignette(0.18);
+      drawTextOutlined("Столовая", 94, 118, 12, locationLabelColor, "#ffffff");
+      return;
+    }
+
+    if (type === "sea") {
+      const grad = ctx.createLinearGradient(0, 0, 0, VIEW_H);
+      grad.addColorStop(0, "#f6c27f");
+      grad.addColorStop(0.45, "#f09686");
+      grad.addColorStop(0.72, "#6f8fb4");
+      grad.addColorStop(1, "#365978");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+
+      drawRect(0, 292, VIEW_W, 248, "#3f6f93");
+      for (let i = 0; i < 24; i++) {
+        drawRect(0, 298 + i * 10, VIEW_W, 2, i % 2 ? "#5a84a8" : "#315d7f");
+      }
+
+      drawRect(412, 154, 136, 136, "#f8d89d");
+      drawRect(430, 172, 100, 100, "#f2b58a");
+      drawRect(448, 190, 64, 64, "#f8d89d");
+
+      drawRect(0, 430, VIEW_W, 110, "#d5b892");
+      for (let i = 0; i < 40; i++) {
+        const x = 10 + i * 24;
+        const h = 8 + ((i * 7) % 12);
+        drawRect(x, 432 + (i % 3) * 6, 14, h, "#c6a27b");
+      }
+
+      drawRect(160, 390, 10, 46, "#4a5f43");
+      drawRect(166, 376, 18, 14, "#4a5f43");
+      drawRect(178, 390, 10, 46, "#4a5f43");
+      drawRect(760, 396, 10, 40, "#4a5f43");
+      drawRect(766, 382, 18, 14, "#4a5f43");
+      drawRect(778, 396, 10, 40, "#4a5f43");
+
+      drawTexture(16, 0.06);
+      drawVignette(0.2);
+      drawTextOutlined("Море и закат", 96, 112, 12, locationLabelColor, "#ffffff");
+      return;
+    }
+
     drawRect(0, 0, VIEW_W, VIEW_H, "#d9dde8");
   }
 
@@ -2010,6 +2663,9 @@
     if (type === "classroom") return "Класс";
     if (type === "library") return "Аудитория 314";
     if (type === "roof") return "Крыша главного корпуса МПГУ";
+    if (type === "gym") return "Спортзал";
+    if (type === "canteen") return "Столовая";
+    if (type === "sea") return "Летний лагерь у моря";
     return "";
   }
 
@@ -2090,6 +2746,17 @@
       bodyY = 38;
     }
 
+    if (species === "varan") {
+      headW = 58;
+      headH = 48;
+      headTop = -30;
+      bodyW = 60;
+      bodyH = 44;
+      bodyY = 36;
+      legY = 76;
+      legH = 24;
+    }
+
     if (isGrayCat) {
       headW = 54;
       headH = 58;
@@ -2123,6 +2790,10 @@
     } else if (species === "dog") {
       drawRect(baseX + 28, baseY + 56, 14, 8, furDark);
       drawRect(baseX + 40, baseY + 58, 10, 6, fur);
+    } else if (species === "varan") {
+      drawRect(baseX + 30, baseY + 58, 16, 6, furDark);
+      drawRect(baseX + 44, baseY + 56, 12, 8, furDark);
+      drawRect(baseX + 54, baseY + 58, 10, 4, "#d4c68f");
     }
 
     const legColor = isGrayCat ? "#4f535c" : focused ? "#4e2e22" : "#5f3b2b";
@@ -2143,6 +2814,11 @@
       drawRect(baseX - 4, baseY + bodyY, 8, bodyH + 2, "#4f5259");
       drawRect(baseX - 12, baseY + bodyY + 8, 8, 16, "#8c9097");
       drawRect(baseX + 4, baseY + bodyY + 8, 8, 16, "#8c9097");
+    } else if (extras.includes("jacket")) {
+      drawRect(baseX - 24, baseY + bodyY, 48, bodyH + 6, "#59647a");
+      drawRect(baseX - 4, baseY + bodyY, 8, bodyH + 2, "#3f495e");
+      drawRect(baseX - 14, baseY + bodyY + 10, 10, 16, "#7a869f");
+      drawRect(baseX + 4, baseY + bodyY + 10, 10, 16, "#7a869f");
     }
 
     const headLeft = baseX - headW / 2;
@@ -2186,10 +2862,16 @@
       drawRect(baseX - 10, baseY + headTop + 40, 20, 8, "#d0af89");
       drawRect(baseX - 34, baseY + headTop + 4, 10, 16, furDark);
       drawRect(baseX + 24, baseY + headTop + 4, 10, 16, furDark);
+    } else if (species === "varan") {
+      drawRect(baseX - 20, baseY + headTop + 26, 40, 14, "#c9c48f");
+      drawRect(baseX - 8, baseY + headTop + 36, 16, 6, "#b0a96e");
+      drawRect(baseX - 28, baseY + headTop + 4, 8, 8, furDark);
+      drawRect(baseX + 20, baseY + headTop + 4, 8, 8, furDark);
+      drawRect(baseX - 12, baseY + headTop + 12, 24, 6, shadeColor(fur, -22));
     }
 
     const eyeY = baseY + headTop + 22;
-    const eyeOffset = isGrayCat ? 11 : species === "cat" ? 10 : 12;
+    const eyeOffset = isGrayCat ? 11 : species === "cat" ? 10 : species === "varan" ? 9 : 12;
     drawRect(baseX - eyeOffset, eyeY, 4, 4, outline);
     drawRect(baseX + eyeOffset - 4, eyeY, 4, 4, outline);
     drawRect(baseX - eyeOffset + 1, eyeY + 1, 1, 1, "#ffffff");
@@ -2263,6 +2945,11 @@
       drawRect(baseX - 50, baseY + bodyY + 8, 16, 2, "#86aa73");
     }
 
+    if (extras.includes("chalk")) {
+      drawRect(baseX - 52, baseY + bodyY + 10, 16, 4, "#f4f3ea");
+      drawRect(baseX - 52, baseY + bodyY + 14, 16, 2, "#9aa5be");
+    }
+
     if (focused) {
       drawRect(baseX - 42, baseY + 94, 84, 3, "#f3deb2");
       drawRect(baseX - 36, baseY + 98, 72, 2, "#f8eed5");
@@ -2320,7 +3007,7 @@
       }
     }
 
-    drawPanel(664, 196, 284, 74, "#1f3556", "#2d4f77");
+    drawPanel(664, 196, 284, 108, "#1f3556", "#2d4f77");
     drawText("Прогресс", 676, 214, 10, "#f6ecd9");
 
     const flags = [
@@ -2329,14 +3016,17 @@
       { key: "ai", label: "ИИ" },
       { key: "wolf", label: "Практика" },
       { key: "final", label: "Финал" },
+      { key: "qadic", label: "q-адик" },
+      { key: "sport", label: "Спорт" },
+      { key: "letters", label: "ПИрожок" },
     ];
 
     for (let i = 0; i < flags.length; i++) {
       const item = flags[i];
       const x = 676 + (i % 2) * 132;
-      const y = 218 + Math.floor(i / 2) * 16;
+      const y = 218 + Math.floor(i / 2) * 20;
       drawRect(x, y, 120, 18, state.tasks[item.key] ? palette.emerald : "#6f7586");
-      drawText(item.label, x + 10, y + 13, 10, "#f5ecd8");
+      drawText(item.label, x + 10, y + 13, 9, "#f5ecd8");
     }
 
     if (state.companionTip) {
@@ -2693,19 +3383,107 @@
     drawText(`${game.notice} Ошибки: ${game.mistakes}`, 54, 498, 12, "#f5ecd8");
   }
 
+  function drawMiniQadic() {
+    const game = state.qadicGame;
+    drawBackground("classroom");
+    drawRect(0, 0, VIEW_W, VIEW_H, "rgba(17, 23, 35, 0.32)");
+
+    drawPanel(20, 20, 920, 56, "#203757", "#29446a");
+    drawText("Загадка: как выглядит q-адическое число?", 44, 53, 13, "#f5ecd8");
+
+    if (!game) return;
+
+    drawPanel(88, 96, 784, 72, "#2a4a6b", "#f7efdf");
+    drawWrappedText(game.question, 112, 136, 740, 20, 15, palette.burgundy);
+
+    const boxes = getQadicBoxes();
+    for (let i = 0; i < boxes.length; i++) {
+      const box = boxes[i];
+      const active = i === game.selected;
+      drawPanel(box.x, box.y, box.w, box.h, active ? "#2f6956" : "#314b6d", active ? "#e3f3ea" : "#f7efdf");
+      drawWrappedText(`${i + 1}. ${game.options[i].text}`, box.x + 16, box.y + 28, box.w - 30, 18, 11, palette.ink);
+    }
+
+    drawPanel(88, 470, 784, 44, "#203757", "#29446a");
+    drawWrappedText(game.feedback, 110, 495, 750, 16, 10, "#f5ecd8");
+  }
+
+  function drawMiniSport() {
+    const game = state.sportGame;
+    drawBackground("gym");
+    drawRect(0, 0, VIEW_W, VIEW_H, "rgba(12, 18, 29, 0.24)");
+
+    drawPanel(20, 20, 920, 56, "#203757", "#29446a");
+    drawText("Спортзал: лови числа по условию раунда", 42, 53, 13, "#f5ecd8");
+
+    if (!game) return;
+
+    drawPanel(68, 86, 824, 48, "#2a4a6b", "#f7efdf");
+    drawText(`Раунд ${game.round + 1}/3`, 90, 114, 11, palette.burgundy);
+    drawText(`Поймано: ${game.caught}/${game.goal}`, 264, 114, 11, palette.ink);
+    drawText(`Время: ${Math.ceil(game.time)}`, 472, 114, 11, palette.ink);
+    drawWrappedText(sportHintText(game.round), 600, 114, 272, 14, 9, "#385b86");
+
+    drawPanel(68, 142, 824, 322, "#203757", "#dbe6f7");
+
+    for (const item of game.numbers) {
+      const good = sportMatchesRound(game.round, item.value);
+      drawPanel(item.x - 22, item.y - 16, 44, 32, good ? "#2f6956" : "#753246", "#f7efdf");
+      drawText(String(item.value), item.x - 13, item.y + 5, 11, palette.ink);
+    }
+
+    drawPanel(game.basketX - game.basketW / 2, 456, game.basketW, 28, "#223a5e", "#f7e3bf");
+    drawText("Ловушка", game.basketX - 34, 474, 9, "#223a5e");
+
+    drawPanel(68, 474, 824, 40, "#203757", "#29446a");
+    drawWrappedText(game.feedback, 90, 498, 790, 15, 10, "#f5ecd8");
+  }
+
+  function drawMiniLetters() {
+    const game = state.lettersGame;
+    drawBackground("canteen");
+    drawRect(0, 0, VIEW_W, VIEW_H, "rgba(15, 22, 34, 0.3)");
+
+    drawPanel(20, 20, 920, 56, "#203757", "#29446a");
+    drawText("Столовая: подбери букву к названию ПИрожка", 42, 53, 12, "#f5ecd8");
+
+    if (!game) return;
+    const current = game.items[game.index];
+    if (!current) return;
+
+    drawPanel(110, 94, 740, 88, "#2a4a6b", "#f7efdf");
+    drawText(`Задание ${game.index + 1}/${game.items.length}`, 136, 126, 11, palette.burgundy);
+    drawText(`Название буквы: ${current.name}`, 136, 156, 14, palette.ink);
+
+    const boxes = getLetterBoxes();
+    for (let i = 0; i < boxes.length; i++) {
+      const box = boxes[i];
+      const active = i === game.selected;
+      drawPanel(box.x, box.y, box.w, box.h, active ? "#2f6956" : "#314b6d", active ? "#e3f3ea" : "#f7efdf");
+      drawText(game.options[i], box.x + box.w / 2 - 8, box.y + 54, 30, palette.ink);
+      drawText(`${i + 1}`, box.x + 16, box.y + 22, 11, "#5b6680");
+    }
+
+    drawPanel(110, 430, 740, 36, "#2a4a6b", "#f7efdf");
+    drawText(`Верно: ${game.correct}  Ошибки: ${game.mistakes}`, 136, 454, 11, palette.ink);
+
+    drawPanel(110, 470, 740, 44, "#203757", "#29446a");
+    drawWrappedText(game.feedback, 132, 495, 704, 15, 10, "#f5ecd8");
+  }
+
   function drawOutro() {
-    drawBackground("roof");
+    drawBackground("sea");
     drawRect(0, 0, VIEW_W, VIEW_H, "rgba(10, 16, 28, 0.42)");
 
     drawPanel(80, 52, 800, 126, "#1f3556", "#f1e8d6");
-    drawText("ТЫ СДАЛ СЕССИЮ!", 186, 118, 52, palette.burgundy);
-    drawText("Инф и Мэт завершили первый большой маршрут.", 176, 156, 13, palette.ink);
+    drawText("ТЫ СДАЛ ЛЕТНЮЮ СЕССИЮ!", 98, 118, 46, palette.burgundy);
+    drawText("Инф и Мэт закрыли второй уровень.", 226, 156, 13, palette.ink);
 
     drawPanel(140, 210, 680, 176, "#203757", "#2d4f77");
     drawText("Твой профессиональный вектор: " + state.careerPath, 166, 244, 15, "#f4ebd8");
     drawText("Артефактов собрано: " + state.artifacts.length, 166, 272, 12, "#dce8fa");
-    drawText("ИИМ МПГУ: учитель, методист, исследователь, тьютор, EdTech", 166, 300, 12, "#dce8fa");
-    drawText("Инф и Мэт готовы к следующему семестру.", 166, 328, 12, "#dce8fa");
+    drawText("Лисята уехали на практику вожатыми в летний лагерь.", 166, 300, 12, "#dce8fa");
+    drawText("Море, закат и педагогическая смена впереди.", 166, 328, 12, "#dce8fa");
 
     for (let i = 0; i < 28; i++) {
       const cx = 120 + ((i * 47 + Math.floor(state.clock * 34)) % 720);
@@ -2767,6 +3545,12 @@
       drawMiniWolf();
     } else if (state.mode === "mini_final") {
       drawMiniFinal();
+    } else if (state.mode === "mini_qadic") {
+      drawMiniQadic();
+    } else if (state.mode === "mini_sport") {
+      drawMiniSport();
+    } else if (state.mode === "mini_letters") {
+      drawMiniLetters();
     } else if (state.mode === "outro") {
       drawOutro();
     } else if (state.mode === "fail") {
@@ -2840,6 +3624,36 @@
         type: "final",
         selectedGood: state.finalGame.selectedGood,
         mistakes: state.finalGame.mistakes,
+      };
+    }
+
+    if (state.mode === "mini_qadic" && state.qadicGame) {
+      return {
+        type: "qadic",
+        selected: state.qadicGame.selected,
+        solved: state.qadicGame.solved,
+        feedback: state.qadicGame.feedback,
+      };
+    }
+
+    if (state.mode === "mini_sport" && state.sportGame) {
+      return {
+        type: "sport",
+        round: state.sportGame.round,
+        caught: state.sportGame.caught,
+        goal: state.sportGame.goal,
+        numbers: state.sportGame.numbers.length,
+        time: Number(state.sportGame.time.toFixed(2)),
+      };
+    }
+
+    if (state.mode === "mini_letters" && state.lettersGame) {
+      return {
+        type: "letters",
+        index: state.lettersGame.index,
+        total: state.lettersGame.items.length,
+        correct: state.lettersGame.correct,
+        mistakes: state.lettersGame.mistakes,
       };
     }
 
