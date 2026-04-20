@@ -28,11 +28,11 @@
 
   const roadmap = {
     bvo: [
-      "1 курс: Первая пара",
-      "2 курс: Летняя сессия",
-      "3 курс: Практика в школе",
-      "4 курс: Исследовательский семинар",
-      "5 курс: Преддипломный маршрут",
+      "1 семестр: Первая пара",
+      "2 семестр: Летняя сессия",
+      "3 семестр: Практика в школе",
+      "4 семестр: Исследовательский семинар",
+      "5 семестр: Преддипломный маршрут",
     ],
     spvo: [
       "Магистратура: Профиль",
@@ -173,7 +173,7 @@
       lines: [
         {
           speaker: "narrator",
-          text: "1 курс. В расписании появляется «Зачёт по методике».",
+          text: "1 семестр. В расписании появляется «Зачёт по методике».",
         },
         {
           speaker: "narrator",
@@ -334,7 +334,7 @@
       lines: [
         {
           speaker: "wolf_tail",
-          text: "Если увидите первокурсников, не пугайтесь. Они всегда боятся.",
+          text: "Если увидите новеньких, не пугайтесь. Они всегда боятся.",
         },
         {
           speaker: "wolf_tail",
@@ -458,6 +458,11 @@
           text: "Институт математики и информатики МПГУ - это место, где идеи становятся педагогической практикой.",
         },
       ],
+      transitionSplash: {
+        title: "1 СЕМЕСТР ЗАВЕРШЕН",
+        subtitle: "Уровень 2: Летняя сессия",
+        note: "Инф и Мэт переходят к новому блоку заданий.",
+      },
       next: "summer_intro",
     },
     summer_intro: {
@@ -520,6 +525,10 @@
         {
           speaker: "varan_jacket",
           text: "Верно: q-адические числа бесконечны в обе стороны по степеням q.",
+        },
+        {
+          speaker: "varan_jacket",
+          text: "Пример: ... + 3q^-2 + q^-1 + 1 + 2q + 4q^2 + ...",
         },
         {
           speaker: "varan_jacket",
@@ -725,6 +734,7 @@
     choice: null,
     pendingMiniSource: null,
     pendingMiniNext: null,
+    splash: null,
     careerPath: "методист",
     qrGame: null,
     planGame: null,
@@ -806,6 +816,7 @@
     state.choice = null;
     state.pendingMiniSource = null;
     state.pendingMiniNext = null;
+    state.splash = null;
     state.careerPath = "методист";
 
     state.qrGame = null;
@@ -1108,6 +1119,7 @@
     state.lineIndex = 0;
     state.typeProgress = 0;
     state.mode = "novel";
+    state.splash = null;
     state.choice = null;
     const scene = currentScene();
     if (scene && scene.chapter) {
@@ -1148,12 +1160,27 @@
       return;
     }
 
+    if (scene.transitionSplash) {
+      startSplash(scene.transitionSplash, scene.next);
+      return;
+    }
+
     if (scene.next) {
       setScene(scene.next);
       return;
     }
 
     state.mode = scene.endMode || "outro";
+  }
+
+  function startSplash(splashData, nextScene) {
+    state.mode = "splash";
+    state.splash = {
+      title: splashData.title || "",
+      subtitle: splashData.subtitle || "",
+      note: splashData.note || "",
+      nextScene: nextScene || null,
+    };
   }
 
   function startChoice(choiceData, nextScene) {
@@ -1448,7 +1475,7 @@
         question: "Как выглядит q-адическое число?",
         options: [
           { text: "Конечная десятичная дробь с запятой.", good: false },
-          { text: "Бесконечная запись в обе стороны по степеням q.", good: true },
+          { text: "Бесконечная запись в обе стороны по степеням q (например: ... + 3q^-2 + q^-1 + 1 + 2q + 4q^2 + ...).", good: true },
           { text: "Только отрицательные целые числа.", good: false },
           { text: "Случайный набор цифр без арифметики.", good: false },
         ],
@@ -1470,8 +1497,8 @@
         basketX: 480,
         basketW: 108,
         numbers: [],
-        spawnTimer: 0.35,
-        time: 78,
+        spawnTimer: 0.55,
+        time: 110,
         feedback: "Раунд 1: лови только четные числа.",
       };
       showMessage("Спортзал: ловим числа по правилам раундов.", 3.2);
@@ -1920,7 +1947,7 @@
     if (!option) return;
 
     if (option.good) {
-      game.feedback = "Верно. Это запись по степеням q, бесконечная в обе стороны.";
+      game.feedback = "Верно. Пример: ... + 3q^-2 + q^-1 + 1 + 2q + 4q^2 + ...";
       game.solved = true;
       game.lock = 0.9;
     } else {
@@ -2010,7 +2037,7 @@
       x: 92 + Math.random() * 776,
       y: 96,
       value,
-      vy: 136 + Math.random() * 86,
+      vy: 68 + Math.random() * 34,
     };
   }
 
@@ -2028,7 +2055,7 @@
     game.spawnTimer -= dt;
     if (game.spawnTimer <= 0) {
       game.numbers.push(spawnSportNumber(game.round));
-      game.spawnTimer = 0.45 + Math.random() * 0.25;
+      game.spawnTimer = 0.62 + Math.random() * 0.3;
     }
 
     for (let i = game.numbers.length - 1; i >= 0; i--) {
@@ -2166,6 +2193,17 @@
     }
   }
 
+  function updateSplash() {
+    if (justPressed("enter", "space") || input.mouse.clicked) {
+      const nextScene = state.splash ? state.splash.nextScene : null;
+      if (nextScene) {
+        setScene(nextScene);
+      } else {
+        state.mode = "outro";
+      }
+    }
+  }
+
   function updateOutro() {
     if (justPressed("enter", "space") || input.mouse.clicked) {
       resetState();
@@ -2196,6 +2234,8 @@
       updateIntro(dt);
     } else if (state.mode === "select") {
       updateHeroSelect();
+    } else if (state.mode === "splash") {
+      updateSplash();
     } else if (state.mode === "novel") {
       updateNovel(dt);
     } else if (state.mode === "choice") {
@@ -3427,8 +3467,7 @@
     drawPanel(68, 142, 824, 322, "#203757", "#dbe6f7");
 
     for (const item of game.numbers) {
-      const good = sportMatchesRound(game.round, item.value);
-      drawPanel(item.x - 22, item.y - 16, 44, 32, good ? "#2f6956" : "#753246", "#f7efdf");
+      drawPanel(item.x - 22, item.y - 16, 44, 32, "#314b6d", "#f7efdf");
       drawText(String(item.value), item.x - 13, item.y + 5, 11, palette.ink);
     }
 
@@ -3469,6 +3508,21 @@
 
     drawPanel(110, 470, 740, 44, "#203757", "#29446a");
     drawWrappedText(game.feedback, 132, 495, 704, 15, 10, "#f5ecd8");
+  }
+
+  function drawSemesterSplash() {
+    const splash = state.splash;
+    drawBackground("roof");
+    drawRect(0, 0, VIEW_W, VIEW_H, "rgba(9, 16, 30, 0.54)");
+
+    drawPanel(112, 114, 736, 300, "#1f3556", "#f1e8d6");
+    drawText(splash ? splash.title : "Переход семестра", 480, 182, 34, palette.burgundy, "center");
+    drawText(splash ? splash.subtitle : "", 480, 232, 16, "#24405f", "center");
+    drawText(splash ? splash.note : "", 480, 270, 11, "#344c68", "center");
+
+    drawPanel(220, 318, 520, 72, "#2f6956", "#3e806a");
+    drawText("Enter/Клик: продолжить", 480, 350, 15, "#f7efdf", "center");
+    drawText("Переход ко 2 семестру", 480, 376, 11, "#def3ea", "center");
   }
 
   function drawOutro() {
@@ -3531,6 +3585,8 @@
       drawIntro();
     } else if (state.mode === "select") {
       drawHeroSelect();
+    } else if (state.mode === "splash") {
+      drawSemesterSplash();
     } else if (state.mode === "novel") {
       drawNovelScene();
     } else if (state.mode === "choice") {
