@@ -699,6 +699,7 @@
     selectIndex: 0,
     introTimer: 0,
     introReady: false,
+    startLevel: 1,
     sceneId: "dorm_intro",
     lineIndex: 0,
     typeProgress: 0,
@@ -784,6 +785,7 @@
     state.selectIndex = 0;
     state.introTimer = 0;
     state.introReady = false;
+    state.startLevel = 1;
     state.sceneId = "dorm_intro";
     state.lineIndex = 0;
     state.typeProgress = 0;
@@ -1128,11 +1130,31 @@
     refreshCompanionTip();
   }
 
+  function setInitialLevelProgress(level) {
+    const startFromSecond = level === 2;
+    state.tasks.qr = startFromSecond;
+    state.tasks.plan = startFromSecond;
+    state.tasks.ai = startFromSecond;
+    state.tasks.wolf = startFromSecond;
+    state.tasks.final = startFromSecond;
+    state.tasks.qadic = false;
+    state.tasks.sport = false;
+    state.tasks.letters = false;
+  }
+
   function chooseHero(id) {
     state.heroId = id;
     state.companionId = id === "inf" ? "met" : "inf";
+    setInitialLevelProgress(state.startLevel);
+
+    if (state.startLevel === 2) {
+      setScene("summer_intro");
+      showMessage(`Герой выбран: ${resolveHero(id).name}. Запуск со 2 семестра.`);
+      return;
+    }
+
     setScene("dorm_intro");
-    showMessage(`Герой выбран: ${resolveHero(id).name}`);
+    showMessage(`Герой выбран: ${resolveHero(id).name}. Запуск с 1 семестра.`);
   }
 
   function advanceLine() {
@@ -1613,9 +1635,21 @@
     if (justPressed("arrowright", "d")) {
       state.selectIndex = (state.selectIndex + 1) % 2;
     }
+    if (justPressed("arrowup", "w", "1")) {
+      state.startLevel = 1;
+    }
+    if (justPressed("arrowdown", "s", "2")) {
+      state.startLevel = 2;
+    }
 
+    const levelBoxes = getLevelSelectBoxes();
     const cards = getHeroSelectCards();
     if (input.mouse.clicked) {
+      const levelHit = levelBoxes.findIndex((box) => pointInRect(input.mouse, box));
+      if (levelHit >= 0) {
+        state.startLevel = levelBoxes[levelHit].level;
+        return;
+      }
       const hit = cards.findIndex((card) => pointInRect(input.mouse, card));
       if (hit >= 0) {
         state.selectIndex = hit;
@@ -2060,6 +2094,7 @@
 
     for (let i = game.numbers.length - 1; i >= 0; i--) {
       const item = game.numbers[i];
+      if (!item) continue;
       item.y += item.vy * dt;
 
       const catchZone = item.y >= 438 && item.y <= 490;
@@ -2074,6 +2109,7 @@
             game.round += 1;
             game.caught = 0;
             game.numbers = [];
+            game.spawnTimer = 0.45;
             if (game.round >= 3) {
               state.sportGame = null;
               completeMini("sport", true);
@@ -2085,6 +2121,7 @@
             } else if (game.round === 2) {
               showMessage("Раунд 3: лови кратные 7.", 2.8);
             }
+            return;
           }
         } else {
           game.numbers.splice(i, 1);
@@ -3105,6 +3142,13 @@
     ];
   }
 
+  function getLevelSelectBoxes() {
+    return [
+      { x: 180, y: 130, w: 286, h: 28, label: "1 семестр", level: 1 },
+      { x: 494, y: 130, w: 286, h: 28, label: "2 семестр", level: 2 },
+    ];
+  }
+
   function drawIntro() {
     drawRect(0, 0, VIEW_W, VIEW_H, "#04070d");
     drawPixelStars(46, "#ead7aa", 0.55);
@@ -3128,7 +3172,15 @@
     drawPanel(100, 22, 760, 112, "#1f3556", "#f2e9d7");
     drawText("Выбор героя", 384, 58, 28, palette.burgundy);
     drawText("Играй за Инфа или Мэта. Второй лис станет спутником.", 128, 88, 12, palette.ink);
-    drawText("Формат: визуальная новелла с сюжетными мини-играми.", 128, 110, 12, palette.ink);
+    drawText("Формат: визуальная новелла с сюжетными мини-играми.", 128, 108, 11, palette.ink);
+
+    const levelBoxes = getLevelSelectBoxes();
+    drawText("Выбери уровень:", 128, 128, 11, "#29446a");
+    for (const box of levelBoxes) {
+      const active = state.startLevel === box.level;
+      drawPanel(box.x, box.y, box.w, box.h, active ? "#2f6956" : "#314b6d", active ? "#e3f3ea" : "#f7efdf");
+      drawText(box.label, box.x + 86, box.y + 19, 10, palette.ink);
+    }
 
     const cards = getHeroSelectCards();
     const ids = ["inf", "met"];
@@ -3146,8 +3198,8 @@
       drawWrappedText(hero.motto, card.x + 26, card.y + 98, card.w - 52, 16, 10, palette.ink);
     }
 
-    drawPanel(182, 486, 594, 34, "#1d3152", "#2a4a72");
-    drawText("A/D или стрелки, Enter. F - полноэкранный режим", 208, 508, 11, "#f4ebd8");
+    drawPanel(170, 486, 620, 34, "#1d3152", "#2a4a72");
+    drawText("A/D: герой, W/S: уровень, Enter: старт, F: полноэкранный", 190, 508, 10, "#f4ebd8");
   }
 
   function drawNovelScene() {
